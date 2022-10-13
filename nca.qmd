@@ -1,0 +1,265 @@
+---
+title-block-banner: true
+title: "💻 NCA 분석기"
+subtitle: "몰림앱"
+description: "국내 바이오연구자분들께 도움이 되고자 주식회사 몰림이 제공하는 웹앱입니다."
+affiliation: "molim Inc."
+author: "박현수, CEO, molim Inc."
+date: today
+date-format: short
+theme: simplex
+format: 
+  html:
+    toc: true
+    toc-title: ""
+    toc-location: left
+server: shiny
+---
+
+<!-- [![](fig/molimCI_rainbow.png){fig-align="center"}](https://www.molim.xyz/) -->
+
+<!-- ## 📉 반감기계산기 -->
+
+::: callout-note
+### 👋 피드백 환영
+
+이용해 보시고 불편한 점, 제안하실 것 등 다양한 의견을 전해주세요.
+
+🏠[몰림](https://www.molim.xyz/) 📨 contact@molim.xyz
+:::
+
+## ✍ 써보기
+
+오른쪽 표에 데이터를 채우면 데이터의 시간-농도 그래프와 그것을 비구획모형분석법을 이용해 분석한 결과가 출력돼요! 
+
+아래 각 모형을 이용해 추정된 반감기계산결과를 확인하세요. 그래프의 산점도 위에 겹쳐진 각 모형의 곡선의 모양과 각 모형의 반감기계산결과를 서로 비교해 보세요.
+
+```{r, message = FALSE}
+#| column: margin
+#packages ui-side
+#UI
+p("️여기 아래 ⬇ 반감기를 계산할 데이터를 입력해 주세요. \"t\"(time)에는 농도측정시간을, \"conc\"(concentration)에는 농도측정값을 넣어주세요. \n맨 처음값(\"t\" = 0, \"conc\" = 0)은 꼭 있어야 해요. 그리고 가장 높은 농도측정값이 측정된 이후의 농도측정시간들에도 최소 5개의 농도측정값이 입력되어야 합니다🙂 입력과 동시에 왼쪽의 그래프가 업데이트 돼요!")
+```
+
+```{r, message = FALSE}
+#| column: margin
+#packages ui-side
+library(shiny)
+library(rhandsontable)
+library(dplyr)
+library(tidyverse)
+#UI
+rHandsontableOutput("df")
+```
+
+```{r, message = FALSE}
+#packages ui-side
+library(shiny)
+library(rhandsontable)
+library(dplyr)
+library(tidyverse)
+#UI
+plotOutput("plt")
+```
+
+## 💻결과
+
+::: callout-tip
+## 비선형모형을 이용해 추정한 반감기계산결과
+
+```{r, message = FALSE}
+#UI
+# tableOutput("tbl")
+p("초반부반감기 =",  textOutput(outputId = "tbl_biexp_initial", inline=T), "| 후반부반감기 =", textOutput(outputId = "tbl_biexp_terminal", inline=T))
+```
+:::
+
+::: callout-tip
+## 선형모형을 이용해 추정한 반감기계산결과
+
+```{r, message = FALSE}
+#UI
+# tableOutput("tbl")
+p("초반부반감기 =",  textOutput(outputId = "tbl_lin_initial", inline=T), "| 후반부반감기 =", textOutput(outputId = "tbl_lin_terminal", inline=T))
+```
+:::
+
+```{r}
+#| context: server
+#packages server-side
+library(shiny)
+library(rhandsontable)
+library(dplyr)
+library(tidyverse)
+library(PK)
+
+source("R/get.PK_hl.R")
+source("R/get.PK_hls.R")
+
+df <- readRDS("data/df.RDS") %>% 
+  dplyr::select("t", "conc")
+
+values <- reactiveValues(data = df)
+    
+    
+output$df <- 
+  renderRHandsontable(
+    {
+      rhandsontable(
+        data = values$data, 
+        readOnly = F, 
+        rowHeaders = NULL, stretchH = "all"
+        )
+    }
+  )
+
+observe({
+  if(!is.null(input$df))
+      values$data <- hot_to_r(input$df)
+  
+  
+  ## results
+  res <- get.PK_hls(values$data)
+  
+  chpts <- data.frame(x = res$hls$lin$chgpt, 
+                      y = approx(x = filter(res$curves, 
+                                            method == "biexp")$t, 
+                                 y = filter(res$curves, 
+                                            method == "biexp")$conc, 
+                                 xout = res$hls$lin$chgpt)$y)
+  
+  ## plt
+  # df <- values$data
+  plt <- ggplot() + 
+    geom_point(data =values$data, 
+               mapping = aes(x = t, y = conc), size = 3) + 
+    geom_line(data = res$curves, 
+              mapping = aes(x = t, y = conc, col = method), 
+              lwd = 1, alpha = 0.7) +
+    # geom_point(data = chpts, aes(x = x, y = y), 
+    #            col = "red", pch = 13, size = 3) +
+    labs(x = "Time (\"t\")", y = "Concentration (\"conc\")") +
+    theme_minimal() +
+    theme(
+      legend.position = "none",
+      text = element_text(size = 14),
+      axis.title.x = element_text(size = 20),
+      axis.title.y = element_text(size = 20),
+      strip.text = element_text(size = 20),
+      legend.justification = "bottom"
+    ) +
+    scale_x_continuous(
+      breaks = values$data$t[c(1,4,5,6,7, 8)],
+      labels = values$data$t[c(1,4,5,6,7, 8)] %>% 
+        format(digits = 1, nsmall = 2)
+    ) + scale_colour_manual(values = c("red", "blue"))
+  
+  # print(plt)
+  output$plt <- 
+    renderPlot(plt, 
+               width = "auto", height = "auto")
+  
+  ## tbl
+  parms_biexp <- res$hls$biexp$parms[1,]
+  parms_lin <- res$hls$lin$parms[1,]
+  parms <- rbind(parms_biexp, parms_lin) %>%
+      `row.names<-`(c("biexp", "lin")) %>%
+      format(digits = 3, nsmall = 3)
+  output$tbl <- renderTable(parms)
+  output$tbl_biexp_initial <- 
+    renderText({parms_biexp[1,1] %>% format(digits = 1, nsmall = 2)})
+  output$tbl_biexp_terminal <- 
+    renderText({parms_biexp[1,2] %>% format(digits = 1, nsmall = 2)})
+  
+  output$tbl_lin_initial <- 
+    renderText({parms_lin[1,1] %>% format(digits = 1, nsmall = 2)})
+  output$tbl_lin_terminal <- 
+    renderText({parms_lin[1,2] %>% format(digits = 1, nsmall = 2)})
+})
+```
+
+<!-- ## What is Pharmacokinetics and ADME? -->
+
+<!-- Pharmacokinetics (PK) is the study of how a drug moves throughout the body and provides important information on the systemic exposure to the drug over time. Conversely, pharmacodynamics (PD) describes what a drug does to the body, meaning, the pharmacologic response that occurs when a drug has reached the site of action. -->
+
+<!-- In order to collect relevant PK and PD data for a drug, clinical studies must be conducted which help determine the onset, magnitude, and duration of a drug's effect. Together, PK and PD data can be used to describe the safety and efficacy of a drug by establishing dose-exposure-response relationships. -->
+
+<!-- Any given drug may behave differently in different patients due to biological variability. Patient-specific factors that influence the way drugs are processed include intrinsic factors such as age, weight, sex, and genetics. There is also typically variability between patients in both the minimum plasma concentration of drug needed to produce a desired pharmacological response and the maximum plasma concentration of drug that can be tolerated without unacceptable toxicity. -->
+
+<!-- Therefore, designing an optimal dosing regimen based on PK and PD data is important to ensure that the majority of patients will attain the proper therapeutic exposure range that does not cause intolerable side effects. This can be accomplished by examining a drug's PK through the processes of absorption, distribution, metabolism, and excretion. -->
+
+<!-- ## The Pharmacokinetics Process: ADME -->
+
+<!-- Absorption, distribution, metabolism, and excretion, also known as "ADME," are the internal processes that describe how a drug moves throughout and is processed by the body. ADME is assessed through the collection of data in clinical pharmacology studies and helps explain the PK processes at play for any given drug. Understanding the ADME properties of a drug is essential to the development of a safe and effective pharmacotherapy. -->
+
+<!-- ### Absorption -->
+
+<!-- Absorption happens when a drug travels from the site of administration to the systemic circulation system -- which provides functional blood supply to all body tissues. The extent of absorption into the bloodstream can be described by bioavailability, which is defined as the fraction of drug that reaches the site of action. -->
+
+<!-- For example, drugs that are taken through an oral route of administration often pass through the small intestine and liver, where some amount of the drug is eliminated prior to reaching the bloodstream. This results in a reduction of the amount of drug delivered to the site of action and therefore decreased bioavailability. Drugs that are administered intravenously are delivered directly to the bloodstream and have a bioavailability of 100%. As a result, absorption is not measured for intravenously administered drugs. -->
+
+<!-- Food effect PK studies are often conducted for orally administered drugs and may provide information on a drug's absorption based on the impact of high fat meals, low fat meals, and fasted states. When necessary, studies with gastric acid-reducing agents may also be conducted to determine if a clinically significant drug-drug interaction (DDI) should be anticipated as a result of concomitantly administered drugs that elevate gastric pH. -->
+
+<!-- Some factors that can affect the rate and extent of drug absorption include: -->
+
+<!-- -   Chemical properties of the drug -->
+
+<!-- -   Drug formulation -->
+
+<!-- -   Route and site of administration -->
+
+<!-- -   Interactions with food or other drugs -->
+
+<!-- -   Patient variabilities -->
+
+<!-- ### Distribution -->
+
+<!-- After a drug is absorbed, it is then distributed throughout the body. Distribution describes the process of a drug traveling into different organs and tissues and depends on a multitude of factors including fluid status, blood flow, and chemical characteristics of the drug. Distribution is measured by a fundamental PK parameter known as the volume of distribution. Volume of distribution describes the amount of drug present in the tissues versus in the blood and is important in determining half-life and dosing regimen. -->
+
+<!-- Another important consideration to the distribution process is protein binding. When a drug enters the circulatory system, it may become bound to plasma proteins such as albumin, the most abundant plasma protein. Protein binding acts as a "holding station," rendering the drug pharmacologically inactive while bound. For a drug to achieve its expected pharmacological response, it must be free (unbound to a plasma protein) and reach the site of action at a designated receptor site. Drugs must also be unbound in order to be metabolized. -->
+
+<!-- ### Metabolism -->
+
+<!-- Once a drug has been absorbed and is distributed throughout the body, metabolism occurs. Drug metabolism is the process of chemically altering the molecules of a drug, which creates new compounds. The compounds created from this process are known as metabolites. Metabolism may occur in many areas of the body including the gastrointestinal tract, kidneys, and plasma, but the majority of metabolism occurs in the body's largest internal organ, the liver. -->
+
+<!-- In the liver, there are many enzymes that can process drugs via Phase 1 and Phase 2 metabolic pathways. Metabolites formed from Phase 1 reactions are more likely to be pharmacologically active. In contrast, Phase 2 reactions generally render a compound more water soluble and pharmacologically inactive. -->
+
+<!-- Although the metabolism of drugs generally decreases their pharmacologic activity, there are some drugs, known as prodrugs, that must undergo metabolism to become active. Prodrugs are often designed to improve certain ADME characteristics of a specific parent drug in order to increase the benefit of the drug for the patient. -->
+
+<!-- Cytochrome P450 (CYP) enzymes are responsible for a large percentage of the metabolism of commonly used drugs. CYP-mediated drug metabolism facilitates the elimination of drugs from the body and plays an important role in drug safety and activity. CYPs contribute to variability in drug response and can be impacted by concomitant medications, which can lead to DDIs. -->
+
+<!-- Some factors that can affect drug metabolism include: -->
+
+<!-- -   Age -->
+
+<!-- -   Genetic factors -->
+
+<!-- -   Drug interactions -->
+
+<!-- -   Organ impairment (e.g., renal or hepatic) -->
+
+<!-- ### Excretion -->
+
+<!-- Any drug that is not eliminated from the body via metabolism is eliminated via excretion. Although drugs can be excreted by a variety of different routes including the liver, lungs, gastrointestinal tract, and skin, the most common pathway of excretion is through the kidneys. -->
+
+<!-- When a drug is primarily excreted via the kidneys, impaired kidney (renal) function can significantly affect a drug's PK. One type of change in the PK of a drug that can occur as a result of impaired renal function is a decrease in the excretion of the drug or a decrease in the excretion of metabolites of the drug. -->
+
+<!-- If a drug is not being excreted properly due to renal dysfunction, drug accumulation in the body and potential toxicity can occur. Therefore, in many programs, it is important to characterize PK in renally impaired subjects in order to provide proper dosing recommendations specific to that patient population. Adjusting dosing regimens in patients with renal impairment can help prevent accumulation at steady-state, especially for drugs with a narrow therapeutic index, thus limiting adverse effects in this vulnerable population. -->
+
+<!-- Some other factors that can affect drug excretion include: -->
+
+<!-- -   Health conditions that impact renal blood flow -->
+
+<!-- -   Intrinsic drug properties, such as pH and size -->
+
+<!-- -   Genetic variation -->
+
+<!-- -   Age -->
+
+<!-- ## Why Pharmacokinetic Studies Are Important -->
+
+<!-- PK studies allow the characterization of ADME properties of a drug early in development. They also provide critical information including the impact of food interactions (in orally administered drugs), drug-drug interactions, and organ impairment on the disposition of a drug. The foundational information gained from PK studies help guide what additional studies are needed, as certain types of clinical studies may not be helpful or relevant for all drugs. PK studies also help identify proper dosing for future studies and real-world use. -->
+
+<!-- PK data should be collected both early and later in development to further elucidate the ADME properties of a drug in larger study populations. Collection of PK data provides an opportunity to assess important information on factors that could cause variability in drug exposures that may lead to compromised safety or efficacy. -->
+
+<!-- Factors that can cause inter-individual variability (variability observed between individuals) or intra-individual variability (variability observed within the same individual) must be identified in order to design the optimal dosing regimen. Researching the PK properties of a drug early-on (and throughout) development ultimately allows for a higher likelihood of downstream success both in clinical studies and in real-world patients. -->

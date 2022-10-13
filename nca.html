@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-0.9.522">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="박현수, CEO, molim Inc.">
+<meta name="dcterms.date" content="2022-10-13">
+<meta name="description" content="국내 바이오연구자분들께 도움이 되고자 주식회사 몰림이 제공하는 웹앱입니다.">
+
+<title>💻 NCA 분석기</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+span.underline{text-decoration: underline;}
+div.column{display: inline-block; vertical-align: top; width: 50%;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+</style>
+
+
+<script src="nca_files/libs/clipboard/clipboard.min.js"></script>
+<script src="nca_files/libs/quarto-html/quarto.js"></script>
+<script src="nca_files/libs/quarto-html/popper.min.js"></script>
+<script src="nca_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="nca_files/libs/quarto-html/anchor.min.js"></script>
+<link href="nca_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="nca_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="nca_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="nca_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="nca_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet">
+
+
+</head>
+
+<body>
+
+<header id="title-block-header" class="quarto-title-block default toc-left page-columns page-full">
+  <div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-body">
+      <h1 class="title">💻 NCA 분석기</h1>
+            <p class="subtitle lead">몰림앱</p>
+                  <div>
+        <div class="description">
+          국내 바이오연구자분들께 도움이 되고자 주식회사 몰림이 제공하는 웹앱입니다.
+        </div>
+      </div>
+                </div>
+  </div>
+    
+  
+  <div class="quarto-title-meta">
+
+      <div>
+      <div class="quarto-title-meta-heading">Author</div>
+      <div class="quarto-title-meta-contents">
+               <p>박현수, CEO, molim Inc. </p>
+            </div>
+    </div>
+      
+      <div>
+      <div class="quarto-title-meta-heading">Published</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date">10/13/22</p>
+      </div>
+    </div>
+      
+    </div>
+    
+  
+  </header><div id="quarto-content" class="page-columns page-rows-contents page-layout-article toc-left">
+<div id="quarto-sidebar-toc-left" class="sidebar toc-left">
+  <nav id="TOC" role="doc-toc">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#써보기" id="toc-써보기" class="nav-link active" data-scroll-target="#써보기">✍ 써보기</a></li>
+  <li><a href="#결과" id="toc-결과" class="nav-link" data-scroll-target="#결과">💻결과</a></li>
+  </ul>
+</nav>
+</div>
+<div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+</div>
+<main class="content quarto-banner-title-block page-columns page-full" id="quarto-document-content">
+
+
+
+
+<!-- [![](fig/molimCI_rainbow.png){fig-align="center"}](https://www.molim.xyz/) -->
+<!-- ## 📉 반감기계산기 -->
+<div class="callout-note callout callout-style-default callout-captioned">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-caption-container flex-fill">
+👋 피드백 환영
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>이용해 보시고 불편한 점, 제안하실 것 등 다양한 의견을 전해주세요.</p>
+<p>🏠<a href="https://www.molim.xyz/">몰림</a> 📨 contact@molim.xyz</p>
+</div>
+</div>
+<section id="써보기" class="level2 page-columns page-full">
+<h2 class="anchored" data-anchor-id="써보기">✍ 써보기</h2>
+<p>오른쪽 표에 데이터를 채우면 데이터의 시간-농도 그래프와 그것을 비구획모형분석법을 이용해 분석한 결과가 출력돼요!</p>
+<p>아래 각 모형을 이용해 추정된 반감기계산결과를 확인하세요. 그래프의 산점도 위에 겹쳐진 각 모형의 곡선의 모양과 각 모형의 반감기계산결과를 서로 비교해 보세요.</p>
+<div class="cell page-columns page-full">
+
+<div class="no-row-height column-margin column-container"><div class="cell-output-display">
+<p>️여기 아래 ⬇ 반감기를 계산할 데이터를 입력해 주세요. "t"(time)에는 농도측정시간을, "conc"(concentration)에는 농도측정값을 넣어주세요. 
+맨 처음값("t" = 0, "conc" = 0)은 꼭 있어야 해요. 그리고 가장 높은 농도측정값이 측정된 이후의 농도측정시간들에도 최소 5개의 농도측정값이 입력되어야 합니다🙂 입력과 동시에 왼쪽의 그래프가 업데이트 돼요!</p>
+</div></div></div>
+<div class="cell page-columns page-full">
+
+<div class="no-row-height column-margin column-container"><div class="cell-output-display">
+<p></p><div id="df" style="width:100%; height:100%; " class="rhandsontable html-widget html-widget-output"></div><p></p>
+</div></div></div>
+<div class="cell">
+<div class="cell-output-display">
+<p></p><div id="plt" class="shiny-plot-output" style="width:100%;height:400px;"></div><p></p>
+</div>
+</div>
+</section>
+<section id="결과" class="level2">
+<h2 class="anchored" data-anchor-id="결과">💻결과</h2>
+<div class="callout-tip callout callout-style-default callout-captioned">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-caption-container flex-fill">
+비선형모형을 이용해 추정한 반감기계산결과
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<div class="cell">
+<div class="cell-output-display">
+<p>
+초반부반감기 =
+<span id="tbl_biexp_initial" class="shiny-text-output"></span>
+| 후반부반감기 =
+<span id="tbl_biexp_terminal" class="shiny-text-output"></span>
+</p>
+</div>
+</div>
+</div>
+</div>
+<div class="callout-tip callout callout-style-default callout-captioned">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-caption-container flex-fill">
+선형모형을 이용해 추정한 반감기계산결과
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<div class="cell">
+<div class="cell-output-display">
+<p>
+초반부반감기 =
+<span id="tbl_lin_initial" class="shiny-text-output"></span>
+| 후반부반감기 =
+<span id="tbl_lin_terminal" class="shiny-text-output"></span>
+</p>
+</div>
+</div>
+</div>
+</div>
+<div class="cell" data-context="server">
+
+</div>
+<!-- ## What is Pharmacokinetics and ADME? -->
+<!-- Pharmacokinetics (PK) is the study of how a drug moves throughout the body and provides important information on the systemic exposure to the drug over time. Conversely, pharmacodynamics (PD) describes what a drug does to the body, meaning, the pharmacologic response that occurs when a drug has reached the site of action. -->
+<!-- In order to collect relevant PK and PD data for a drug, clinical studies must be conducted which help determine the onset, magnitude, and duration of a drug's effect. Together, PK and PD data can be used to describe the safety and efficacy of a drug by establishing dose-exposure-response relationships. -->
+
+<!-- Any given drug may behave differently in different patients due to biological variability. Patient-specific factors that influence the way drugs are processed include intrinsic factors such as age, weight, sex, and genetics. There is also typically variability between patients in both the minimum plasma concentration of drug needed to produce a desired pharmacological response and the maximum plasma concentration of drug that can be tolerated without unacceptable toxicity. -->
+<!-- Therefore, designing an optimal dosing regimen based on PK and PD data is important to ensure that the majority of patients will attain the proper therapeutic exposure range that does not cause intolerable side effects. This can be accomplished by examining a drug's PK through the processes of absorption, distribution, metabolism, and excretion. -->
+<!-- ## The Pharmacokinetics Process: ADME -->
+<!-- Absorption, distribution, metabolism, and excretion, also known as "ADME," are the internal processes that describe how a drug moves throughout and is processed by the body. ADME is assessed through the collection of data in clinical pharmacology studies and helps explain the PK processes at play for any given drug. Understanding the ADME properties of a drug is essential to the development of a safe and effective pharmacotherapy. -->
+<!-- ### Absorption -->
+<!-- Absorption happens when a drug travels from the site of administration to the systemic circulation system -- which provides functional blood supply to all body tissues. The extent of absorption into the bloodstream can be described by bioavailability, which is defined as the fraction of drug that reaches the site of action. -->
+<!-- For example, drugs that are taken through an oral route of administration often pass through the small intestine and liver, where some amount of the drug is eliminated prior to reaching the bloodstream. This results in a reduction of the amount of drug delivered to the site of action and therefore decreased bioavailability. Drugs that are administered intravenously are delivered directly to the bloodstream and have a bioavailability of 100%. As a result, absorption is not measured for intravenously administered drugs. -->
+<!-- Food effect PK studies are often conducted for orally administered drugs and may provide information on a drug's absorption based on the impact of high fat meals, low fat meals, and fasted states. When necessary, studies with gastric acid-reducing agents may also be conducted to determine if a clinically significant drug-drug interaction (DDI) should be anticipated as a result of concomitantly administered drugs that elevate gastric pH. -->
+<!-- Some factors that can affect the rate and extent of drug absorption include: -->
+<!-- -   Chemical properties of the drug -->
+<!-- -   Drug formulation -->
+<!-- -   Route and site of administration -->
+<!-- -   Interactions with food or other drugs -->
+<!-- -   Patient variabilities -->
+<!-- ### Distribution -->
+<!-- After a drug is absorbed, it is then distributed throughout the body. Distribution describes the process of a drug traveling into different organs and tissues and depends on a multitude of factors including fluid status, blood flow, and chemical characteristics of the drug. Distribution is measured by a fundamental PK parameter known as the volume of distribution. Volume of distribution describes the amount of drug present in the tissues versus in the blood and is important in determining half-life and dosing regimen. -->
+<!-- Another important consideration to the distribution process is protein binding. When a drug enters the circulatory system, it may become bound to plasma proteins such as albumin, the most abundant plasma protein. Protein binding acts as a "holding station," rendering the drug pharmacologically inactive while bound. For a drug to achieve its expected pharmacological response, it must be free (unbound to a plasma protein) and reach the site of action at a designated receptor site. Drugs must also be unbound in order to be metabolized. -->
+<!-- ### Metabolism -->
+<!-- Once a drug has been absorbed and is distributed throughout the body, metabolism occurs. Drug metabolism is the process of chemically altering the molecules of a drug, which creates new compounds. The compounds created from this process are known as metabolites. Metabolism may occur in many areas of the body including the gastrointestinal tract, kidneys, and plasma, but the majority of metabolism occurs in the body's largest internal organ, the liver. -->
+<!-- In the liver, there are many enzymes that can process drugs via Phase 1 and Phase 2 metabolic pathways. Metabolites formed from Phase 1 reactions are more likely to be pharmacologically active. In contrast, Phase 2 reactions generally render a compound more water soluble and pharmacologically inactive. -->
+<!-- Although the metabolism of drugs generally decreases their pharmacologic activity, there are some drugs, known as prodrugs, that must undergo metabolism to become active. Prodrugs are often designed to improve certain ADME characteristics of a specific parent drug in order to increase the benefit of the drug for the patient. -->
+<!-- Cytochrome P450 (CYP) enzymes are responsible for a large percentage of the metabolism of commonly used drugs. CYP-mediated drug metabolism facilitates the elimination of drugs from the body and plays an important role in drug safety and activity. CYPs contribute to variability in drug response and can be impacted by concomitant medications, which can lead to DDIs. -->
+<!-- Some factors that can affect drug metabolism include: -->
+<!-- -   Age -->
+<!-- -   Genetic factors -->
+<!-- -   Drug interactions -->
+<!-- -   Organ impairment (e.g., renal or hepatic) -->
+<!-- ### Excretion -->
+<!-- Any drug that is not eliminated from the body via metabolism is eliminated via excretion. Although drugs can be excreted by a variety of different routes including the liver, lungs, gastrointestinal tract, and skin, the most common pathway of excretion is through the kidneys. -->
+<!-- When a drug is primarily excreted via the kidneys, impaired kidney (renal) function can significantly affect a drug's PK. One type of change in the PK of a drug that can occur as a result of impaired renal function is a decrease in the excretion of the drug or a decrease in the excretion of metabolites of the drug. -->
+<!-- If a drug is not being excreted properly due to renal dysfunction, drug accumulation in the body and potential toxicity can occur. Therefore, in many programs, it is important to characterize PK in renally impaired subjects in order to provide proper dosing recommendations specific to that patient population. Adjusting dosing regimens in patients with renal impairment can help prevent accumulation at steady-state, especially for drugs with a narrow therapeutic index, thus limiting adverse effects in this vulnerable population. -->
+<!-- Some other factors that can affect drug excretion include: -->
+<!-- -   Health conditions that impact renal blood flow -->
+<!-- -   Intrinsic drug properties, such as pH and size -->
+<!-- -   Genetic variation -->
+<!-- -   Age -->
+<!-- ## Why Pharmacokinetic Studies Are Important -->
+<!-- PK studies allow the characterization of ADME properties of a drug early in development. They also provide critical information including the impact of food interactions (in orally administered drugs), drug-drug interactions, and organ impairment on the disposition of a drug. The foundational information gained from PK studies help guide what additional studies are needed, as certain types of clinical studies may not be helpful or relevant for all drugs. PK studies also help identify proper dosing for future studies and real-world use. -->
+<!-- PK data should be collected both early and later in development to further elucidate the ADME properties of a drug in larger study populations. Collection of PK data provides an opportunity to assess important information on factors that could cause variability in drug exposures that may lead to compromised safety or efficacy. -->
+<!-- Factors that can cause inter-individual variability (variability observed between individuals) or intra-individual variability (variability observed within the same individual) must be identified in order to design the optimal dosing regimen. Researching the PK properties of a drug early-on (and throughout) development ultimately allows for a higher likelihood of downstream success both in clinical studies and in real-world patients. -->
+<p>
+<script type="application/shiny-prerendered" data-context="server">
+#packages server-side
+library(shiny)
+library(rhandsontable)
+library(dplyr)
+library(tidyverse)
+library(PK)
+
+source("R/get.PK_hl.R")
+source("R/get.PK_hls.R")
+
+df <- readRDS("data/df.RDS") %>% 
+  dplyr::select("t", "conc")
+
+values <- reactiveValues(data = df)
+    
+    
+output$df <- 
+  renderRHandsontable(
+    {
+      rhandsontable(
+        data = values$data, 
+        readOnly = F, 
+        rowHeaders = NULL, stretchH = "all"
+        )
+    }
+  )
+
+observe({
+  if(!is.null(input$df))
+      values$data <- hot_to_r(input$df)
+  
+  
+  ## results
+  res <- get.PK_hls(values$data)
+  
+  chpts <- data.frame(x = res$hls$lin$chgpt, 
+                      y = approx(x = filter(res$curves, 
+                                            method == "biexp")$t, 
+                                 y = filter(res$curves, 
+                                            method == "biexp")$conc, 
+                                 xout = res$hls$lin$chgpt)$y)
+  
+  ## plt
+  # df <- values$data
+  plt <- ggplot() + 
+    geom_point(data =values$data, 
+               mapping = aes(x = t, y = conc), size = 3) + 
+    geom_line(data = res$curves, 
+              mapping = aes(x = t, y = conc, col = method), 
+              lwd = 1, alpha = 0.7) +
+    # geom_point(data = chpts, aes(x = x, y = y), 
+    #            col = "red", pch = 13, size = 3) +
+    labs(x = "Time (\"t\")", y = "Concentration (\"conc\")") +
+    theme_minimal() +
+    theme(
+      legend.position = "none",
+      text = element_text(size = 14),
+      axis.title.x = element_text(size = 20),
+      axis.title.y = element_text(size = 20),
+      strip.text = element_text(size = 20),
+      legend.justification = "bottom"
+    ) +
+    scale_x_continuous(
+      breaks = values$data$t[c(1,4,5,6,7, 8)],
+      labels = values$data$t[c(1,4,5,6,7, 8)] %>% 
+        format(digits = 1, nsmall = 2)
+    ) + scale_colour_manual(values = c("red", "blue"))
+  
+  # print(plt)
+  output$plt <- 
+    renderPlot(plt, 
+               width = "auto", height = "auto")
+  
+  ## tbl
+  parms_biexp <- res$hls$biexp$parms[1,]
+  parms_lin <- res$hls$lin$parms[1,]
+  parms <- rbind(parms_biexp, parms_lin) %>%
+      `row.names<-`(c("biexp", "lin")) %>%
+      format(digits = 3, nsmall = 3)
+  output$tbl <- renderTable(parms)
+  output$tbl_biexp_initial <- 
+    renderText({parms_biexp[1,1] %>% format(digits = 1, nsmall = 2)})
+  output$tbl_biexp_terminal <- 
+    renderText({parms_biexp[1,2] %>% format(digits = 1, nsmall = 2)})
+  
+  output$tbl_lin_initial <- 
+    renderText({parms_lin[1,1] %>% format(digits = 1, nsmall = 2)})
+  output$tbl_lin_terminal <- 
+    renderText({parms_lin[1,2] %>% format(digits = 1, nsmall = 2)})
+})
+</script>
+ 
+<script type="application/shiny-prerendered" data-context="server-extras">
+ojs_define <- function(..., .session = shiny::getDefaultReactiveDomain()) {
+  quos <- rlang::enquos(...)
+  vars <- rlang::list2(...)
+  nm <- names(vars)
+  if (is.null(nm)) {
+    nm <- rep_len("", length(vars))
+  }
+  mapply(function(q, nm, val) {
+    # Infer name, if possible
+    if (nm == "") {
+      tryCatch({
+        nm <- rlang::as_name(q)
+      }, error = function(e) {
+        code <- paste(collapse = "\n", deparse(rlang::f_rhs(q)))
+        stop("ojs_define() could not create a name for the argument: ", code)
+      })
+    }
+    .session$output[[nm]] <- val
+    outputOptions(.session$output, nm, suspendWhenHidden = FALSE)
+    .session$sendCustomMessage("ojs-export", list(name = nm))
+    NULL
+  }, quos, nm, vars, SIMPLIFY = FALSE, USE.NAMES = FALSE)
+  invisible()
+}
+</script>
+</p>
+<!--html_preserve-->
+
+<script type="application/shiny-prerendered" data-context="dependencies">
+{"type":"list","attributes":{},"value":[{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["htmlwidgets"]},{"type":"character","attributes":{},"value":["1.5.4"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["www"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["htmlwidgets.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["htmlwidgets"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["1.5.4"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["handsontable"]},{"type":"character","attributes":{},"value":["6.2.2"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["htmlwidgets/lib/handsontable"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["handsontable.full.min.js","all.min.js"]},{"type":"character","attributes":{},"value":["handsontable.full.min.css"]},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["rhandsontable"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["0.3.8"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["numbro.languages"]},{"type":"character","attributes":{},"value":["2.0.6"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["htmlwidgets/lib/numbro"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["languages.min.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["rhandsontable"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["0.3.8"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["chroma"]},{"type":"character","attributes":{},"value":["1.3.3"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["htmlwidgets/lib/chroma"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["chroma.min.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["rhandsontable"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["0.3.8"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["jquery"]},{"type":"character","attributes":{},"value":["3.2.1"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["htmlwidgets/lib/jquery"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["jquery.min.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["rhandsontable"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["0.3.8"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["sparkline"]},{"type":"character","attributes":{},"value":["2.1.2"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["htmlwidgets/lib/sparkline"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["jquery.sparkline.min.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["rhandsontable"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["0.3.8"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["rhandsontable"]},{"type":"character","attributes":{},"value":["0.3.7"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["htmlwidgets"]}]},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["rhandsontable.css"]},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["rhandsontable"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["0.3.8"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["rhandsontable-binding"]},{"type":"character","attributes":{},"value":["0.3.8"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["htmlwidgets"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["rhandsontable.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["rhandsontable"]},{"type":"logical","attributes":{},"value":[false]},{"type":"character","attributes":{},"value":["0.3.8"]}]}]}
+</script>
+<!--/html_preserve-->
+<!--html_preserve-->
+
+<script type="application/shiny-prerendered" data-context="execution_dependencies">
+{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["packages"]}},"value":[{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["packages","version"]},"class":{"type":"character","attributes":{},"value":["data.frame"]},"row.names":{"type":"integer","attributes":{},"value":[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,73,74,75,76]}},"value":[{"type":"character","attributes":{},"value":["assertthat","backports","base","broom","cellranger","cli","colorspace","compiler","crayon","datasets","DBI","dbplyr","digest","dplyr","ellipsis","evaluate","fansi","fastmap","forcats","fs","generics","ggplot2","glue","graphics","grDevices","grid","gtable","haven","hms","htmltools","htmlwidgets","httpuv","httr","jsonlite","knitr","later","lifecycle","lubridate","magrittr","methods","mime","modelr","munsell","pillar","pkgconfig","promises","purrr","R6","Rcpp","readr","readxl","reprex","rhandsontable","rlang","rmarkdown","rstudioapi","rvest","scales","shiny","stats","stringi","stringr","tibble","tidyr","tidyselect","tidyverse","tools","tzdb","utf8","utils","vctrs","withr","xfun","xml2","xtable","yaml"]},{"type":"character","attributes":{},"value":["0.2.1","1.4.1","4.2.0","1.0.0","1.1.0","3.3.0","2.0-3","4.2.0","1.5.1","4.2.0","1.1.3","2.2.1","0.6.29","1.0.9","0.3.2","0.15","1.0.3","1.1.0","0.5.1","1.5.2","0.1.3","3.3.6","1.6.2","4.2.0","4.2.0","4.2.0","0.3.0","2.5.0","1.1.1","0.5.2","1.5.4","1.6.5","1.4.3","1.8.0","1.39","1.3.0","1.0.1","1.8.0","2.0.3","4.2.0","0.12","0.1.8","0.5.0","1.7.0","2.0.3","1.2.0.1","0.3.4","2.5.1","1.0.8.3","2.1.2","1.4.0","2.0.1","0.3.8","1.0.3","2.14","0.13","1.0.2","1.2.0","1.7.1","4.2.0","1.7.6","1.4.0","3.1.7","1.2.0","1.1.2","1.3.1","4.2.0","0.3.0","1.2.2","4.2.0","0.4.1","2.5.0","0.31","1.3.3","1.8-4","2.3.5"]}]}]}
+</script>
+<!--/html_preserve-->
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    setTimeout(function() {
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      let href = ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const cites = ref.parentNode.getAttribute('data-cites').split(' ');
+    tippyHover(ref, function() {
+      var popup = window.document.createElement('div');
+      cites.forEach(function(cite) {
+        var citeDiv = window.document.createElement('div');
+        citeDiv.classList.add('hanging-indent');
+        citeDiv.classList.add('csl-entry');
+        var biblioDiv = window.document.getElementById('ref-' + cite);
+        if (biblioDiv) {
+          citeDiv.innerHTML = biblioDiv.innerHTML;
+        }
+        popup.appendChild(citeDiv);
+      });
+      return popup.innerHTML;
+    });
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>
