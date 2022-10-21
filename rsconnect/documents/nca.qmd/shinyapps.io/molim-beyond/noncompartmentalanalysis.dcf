@@ -1,0 +1,15 @@
+name: noncompartmentalanalysis
+title: noncompartmentalanalysis
+username:
+account: molim-beyond
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 7375237
+bundleId: 6425872
+url: https://molimapps.shinyapps.io/noncompartmentalanalysis/
+when: 1666332084.09284
+lastSyncTime: 1666332084.09286
+quarto_version: 0.9.522
+quarto_engines: knitr
+asMultiple: FALSE
+asStatic: FALSE

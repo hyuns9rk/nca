@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="박현수, CEO, molim Inc.">
-<meta name="dcterms.date" content="2022-10-13">
+<meta name="dcterms.date" content="2022-10-21">
 <meta name="description" content="국내 바이오연구자분들께 도움이 되고자 주식회사 몰림이 제공하는 웹앱입니다.">
 
 <title>💻 NCA 분석기</title>
@@ -63,7 +63,7 @@ ul.task-list{list-style: none;}
       <div>
       <div class="quarto-title-meta-heading">Published</div>
       <div class="quarto-title-meta-contents">
-        <p class="date">10/13/22</p>
+        <p class="date">10/21/22</p>
       </div>
     </div>
       
@@ -106,13 +106,13 @@ ul.task-list{list-style: none;}
 </div>
 <section id="써보기" class="level2 page-columns page-full">
 <h2 class="anchored" data-anchor-id="써보기">✍ 써보기</h2>
-<p>오른쪽 표에 데이터를 채우면 데이터의 시간-농도 그래프와 그것을 비구획모형분석법을 이용해 분석한 결과가 출력돼요!</p>
-<p>아래 각 모형을 이용해 추정된 반감기계산결과를 확인하세요. 그래프의 산점도 위에 겹쳐진 각 모형의 곡선의 모양과 각 모형의 반감기계산결과를 서로 비교해 보세요.</p>
+<p>오른쪽 표에 데이터를 채우면 데이터의 시간-농도 그래프와 그것을 비구획모형분석법을 이용해 분석한 결과가 출력돼요! 미리 표를 채워 놨어요.</p>
+<p>📉<a href="https://molimapps.shinyapps.io/half-life/">반감기계산기</a>를 이용하면 비선형모형과 선형모형의 적합곡선까지 확인할 수 있어요.</p>
 <div class="cell page-columns page-full">
 
 <div class="no-row-height column-margin column-container"><div class="cell-output-display">
-<p>️여기 아래 ⬇ 반감기를 계산할 데이터를 입력해 주세요. "t"(time)에는 농도측정시간을, "conc"(concentration)에는 농도측정값을 넣어주세요. 
-맨 처음값("t" = 0, "conc" = 0)은 꼭 있어야 해요. 그리고 가장 높은 농도측정값이 측정된 이후의 농도측정시간들에도 최소 5개의 농도측정값이 입력되어야 합니다🙂 입력과 동시에 왼쪽의 그래프가 업데이트 돼요!</p>
+<p>️여기 아래   ⬇NCA 분석에 이용할 데이터를 입력해 주세요. "t"(time)에는 농도측정시간을, "conc"(concentration)에는 농도측정값을 넣어주세요. 
+맨 처음값("t" = 0, "conc" = 0)은 꼭 있어야 해요. 그리고 가장 높은 농도측정값이 측정된 이후의 농도측정시간들에도 최소 5개의 농도측정값이 입력되어야 합니다🙂 입력과 동시에 그래프와 결과표가 업데이트 돼요!</p>
 </div></div></div>
 <div class="cell page-columns page-full">
 
@@ -127,48 +127,22 @@ ul.task-list{list-style: none;}
 </section>
 <section id="결과" class="level2">
 <h2 class="anchored" data-anchor-id="결과">💻결과</h2>
-<div class="callout-tip callout callout-style-default callout-captioned">
+<div class="callout-warning callout callout-style-default callout-captioned">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-caption-container flex-fill">
-비선형모형을 이용해 추정한 반감기계산결과
+주의
 </div>
 </div>
 <div class="callout-body-container callout-body">
+<p>이 계산기를 이용해 계산한 데이터를 이용하는 것의 책임은 사용자에게 있습니다 🤔</p>
+</div>
+</div>
 <div class="cell">
 <div class="cell-output-display">
-<p>
-초반부반감기 =
-<span id="tbl_biexp_initial" class="shiny-text-output"></span>
-| 후반부반감기 =
-<span id="tbl_biexp_terminal" class="shiny-text-output"></span>
-</p>
-</div>
-</div>
-</div>
-</div>
-<div class="callout-tip callout callout-style-default callout-captioned">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-caption-container flex-fill">
-선형모형을 이용해 추정한 반감기계산결과
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<div class="cell">
-<div class="cell-output-display">
-<p>
-초반부반감기 =
-<span id="tbl_lin_initial" class="shiny-text-output"></span>
-| 후반부반감기 =
-<span id="tbl_lin_terminal" class="shiny-text-output"></span>
-</p>
-</div>
-</div>
+<p></p><div id="nca" style="width:100%; height:100%; " class="rhandsontable html-widget html-widget-output"></div><p></p>
 </div>
 </div>
 <div class="cell" data-context="server">
@@ -226,9 +200,13 @@ library(rhandsontable)
 library(dplyr)
 library(tidyverse)
 library(PK)
+library(PKNCA)
+library(DT)
 
 source("R/get.PK_hl.R")
 source("R/get.PK_hls.R")
+source("R/get.PK_nca.R")
+# source("R/get.PK_ncas.R")
 
 df <- readRDS("data/df.RDS") %>% 
   dplyr::select("t", "conc")
@@ -267,9 +245,11 @@ observe({
   plt <- ggplot() + 
     geom_point(data =values$data, 
                mapping = aes(x = t, y = conc), size = 3) + 
-    geom_line(data = res$curves, 
-              mapping = aes(x = t, y = conc, col = method), 
-              lwd = 1, alpha = 0.7) +
+    geom_line(data =values$data, 
+               mapping = aes(x = t, y = conc), size = 1) + 
+    # geom_line(data = res$curves, 
+    #           mapping = aes(x = t, y = conc, col = method), 
+    #           lwd = 1, alpha = 0.7) +
     # geom_point(data = chpts, aes(x = x, y = y), 
     #            col = "red", pch = 13, size = 3) +
     labs(x = "Time (\"t\")", y = "Concentration (\"conc\")") +
@@ -309,6 +289,46 @@ observe({
     renderText({parms_lin[1,1] %>% format(digits = 1, nsmall = 2)})
   output$tbl_lin_terminal <- 
     renderText({parms_lin[1,2] %>% format(digits = 1, nsmall = 2)})
+  
+  ## NCA
+  nca <- get.PK_nca(values$data) %>% 
+    select(-c("hl", "auc_inf")) %>% 
+    select(c("cmax", "clast", "tmax", "tlast", 
+             "exp.hl.initial", "exp.hl.terminal", "exp.kel", 
+             "lin.hl.initial", "lin.hl.terminal", "lin.kel", 
+             "auc", "auc_inf.exp", "auc_inf.lin")) %>%
+    t
+  
+  colnames(nca) <- c("값")
+  
+  parameter.names <- 
+    data.frame(
+      "파라메터" = c(
+      "최고농도(Cmax)", 
+      "마지막측정농도(Clast)", 
+      "최고농도도달시간(Tmax)", 
+      "마지막농도측정시간(Tlast)", 
+      "비선형모형을 이용해 추정한 반감기(초반부)", 
+      "비선형모형을 이용해 추정한 반감기(후반부)", 
+      "비선형모형 제거율 상수(Kel)",
+      "선형모형을 이용해 추정한 반감기(초반부)", 
+      "선형모형을 이용해 추정한 반감기(후반부)", 
+      "선형모형 제거율 상수(Kel)",
+      "곡선하면적(AUC)", 
+      "곡선하면적무한대외삽(AUCinf; 비선형모형)",
+      "곡선하면적무한대외삽(AUCinf; 선형모형)")
+      )
+  # rownames(nca) <- c(parameters) 
+  
+  nca <- cbind(parameter.names, nca)
+  output$nca <- renderRHandsontable(
+    {
+      rhandsontable(
+        data = nca, 
+        rowHeaders = NULL, stretchH = "all"
+        )
+    }
+  )
 })
 </script>
  
@@ -342,13 +362,13 @@ ojs_define <- function(..., .session = shiny::getDefaultReactiveDomain()) {
 <!--html_preserve-->
 
 <script type="application/shiny-prerendered" data-context="dependencies">
-{"type":"list","attributes":{},"value":[{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["htmlwidgets"]},{"type":"character","attributes":{},"value":["1.5.4"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["www"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["htmlwidgets.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["htmlwidgets"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["1.5.4"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["handsontable"]},{"type":"character","attributes":{},"value":["6.2.2"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["htmlwidgets/lib/handsontable"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["handsontable.full.min.js","all.min.js"]},{"type":"character","attributes":{},"value":["handsontable.full.min.css"]},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["rhandsontable"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["0.3.8"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["numbro.languages"]},{"type":"character","attributes":{},"value":["2.0.6"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["htmlwidgets/lib/numbro"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["languages.min.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["rhandsontable"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["0.3.8"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["chroma"]},{"type":"character","attributes":{},"value":["1.3.3"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["htmlwidgets/lib/chroma"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["chroma.min.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["rhandsontable"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["0.3.8"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["jquery"]},{"type":"character","attributes":{},"value":["3.2.1"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["htmlwidgets/lib/jquery"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["jquery.min.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["rhandsontable"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["0.3.8"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["sparkline"]},{"type":"character","attributes":{},"value":["2.1.2"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["htmlwidgets/lib/sparkline"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["jquery.sparkline.min.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["rhandsontable"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["0.3.8"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["rhandsontable"]},{"type":"character","attributes":{},"value":["0.3.7"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["htmlwidgets"]}]},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["rhandsontable.css"]},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["rhandsontable"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["0.3.8"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["rhandsontable-binding"]},{"type":"character","attributes":{},"value":["0.3.8"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["htmlwidgets"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["rhandsontable.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["rhandsontable"]},{"type":"logical","attributes":{},"value":[false]},{"type":"character","attributes":{},"value":["0.3.8"]}]}]}
+{"type":"list","attributes":{},"value":[{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["htmlwidgets"]},{"type":"character","attributes":{},"value":["1.5.4"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["www"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["htmlwidgets.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["htmlwidgets"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["1.5.4"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["handsontable"]},{"type":"character","attributes":{},"value":["6.2.2"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["htmlwidgets/lib/handsontable"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["handsontable.full.min.js","all.min.js"]},{"type":"character","attributes":{},"value":["handsontable.full.min.css"]},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["rhandsontable"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["0.3.8"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["numbro.languages"]},{"type":"character","attributes":{},"value":["2.0.6"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["htmlwidgets/lib/numbro"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["languages.min.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["rhandsontable"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["0.3.8"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["chroma"]},{"type":"character","attributes":{},"value":["1.3.3"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["htmlwidgets/lib/chroma"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["chroma.min.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["rhandsontable"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["0.3.8"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["jquery"]},{"type":"character","attributes":{},"value":["3.2.1"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["htmlwidgets/lib/jquery"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["jquery.min.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["rhandsontable"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["0.3.8"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["sparkline"]},{"type":"character","attributes":{},"value":["2.1.2"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["htmlwidgets/lib/sparkline"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["jquery.sparkline.min.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["rhandsontable"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["0.3.8"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["rhandsontable"]},{"type":"character","attributes":{},"value":["0.3.7"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["htmlwidgets"]}]},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["rhandsontable.css"]},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["rhandsontable"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["0.3.8"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["rhandsontable-binding"]},{"type":"character","attributes":{},"value":["0.3.8"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["htmlwidgets"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["rhandsontable.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["rhandsontable"]},{"type":"logical","attributes":{},"value":[false]},{"type":"character","attributes":{},"value":["0.3.8"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["htmlwidgets"]},{"type":"character","attributes":{},"value":["1.5.4"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["www"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["htmlwidgets.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["htmlwidgets"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["1.5.4"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["handsontable"]},{"type":"character","attributes":{},"value":["6.2.2"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["htmlwidgets/lib/handsontable"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["handsontable.full.min.js","all.min.js"]},{"type":"character","attributes":{},"value":["handsontable.full.min.css"]},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["rhandsontable"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["0.3.8"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["numbro.languages"]},{"type":"character","attributes":{},"value":["2.0.6"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["htmlwidgets/lib/numbro"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["languages.min.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["rhandsontable"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["0.3.8"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["chroma"]},{"type":"character","attributes":{},"value":["1.3.3"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["htmlwidgets/lib/chroma"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["chroma.min.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["rhandsontable"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["0.3.8"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["jquery"]},{"type":"character","attributes":{},"value":["3.2.1"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["htmlwidgets/lib/jquery"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["jquery.min.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["rhandsontable"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["0.3.8"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["sparkline"]},{"type":"character","attributes":{},"value":["2.1.2"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["htmlwidgets/lib/sparkline"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["jquery.sparkline.min.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["rhandsontable"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["0.3.8"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["rhandsontable"]},{"type":"character","attributes":{},"value":["0.3.7"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["htmlwidgets"]}]},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["rhandsontable.css"]},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["rhandsontable"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["0.3.8"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["rhandsontable-binding"]},{"type":"character","attributes":{},"value":["0.3.8"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["htmlwidgets"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["rhandsontable.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["rhandsontable"]},{"type":"logical","attributes":{},"value":[false]},{"type":"character","attributes":{},"value":["0.3.8"]}]}]}
 </script>
 <!--/html_preserve-->
 <!--html_preserve-->
 
 <script type="application/shiny-prerendered" data-context="execution_dependencies">
-{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["packages"]}},"value":[{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["packages","version"]},"class":{"type":"character","attributes":{},"value":["data.frame"]},"row.names":{"type":"integer","attributes":{},"value":[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,73,74,75,76]}},"value":[{"type":"character","attributes":{},"value":["assertthat","backports","base","broom","cellranger","cli","colorspace","compiler","crayon","datasets","DBI","dbplyr","digest","dplyr","ellipsis","evaluate","fansi","fastmap","forcats","fs","generics","ggplot2","glue","graphics","grDevices","grid","gtable","haven","hms","htmltools","htmlwidgets","httpuv","httr","jsonlite","knitr","later","lifecycle","lubridate","magrittr","methods","mime","modelr","munsell","pillar","pkgconfig","promises","purrr","R6","Rcpp","readr","readxl","reprex","rhandsontable","rlang","rmarkdown","rstudioapi","rvest","scales","shiny","stats","stringi","stringr","tibble","tidyr","tidyselect","tidyverse","tools","tzdb","utf8","utils","vctrs","withr","xfun","xml2","xtable","yaml"]},{"type":"character","attributes":{},"value":["0.2.1","1.4.1","4.2.0","1.0.0","1.1.0","3.3.0","2.0-3","4.2.0","1.5.1","4.2.0","1.1.3","2.2.1","0.6.29","1.0.9","0.3.2","0.15","1.0.3","1.1.0","0.5.1","1.5.2","0.1.3","3.3.6","1.6.2","4.2.0","4.2.0","4.2.0","0.3.0","2.5.0","1.1.1","0.5.2","1.5.4","1.6.5","1.4.3","1.8.0","1.39","1.3.0","1.0.1","1.8.0","2.0.3","4.2.0","0.12","0.1.8","0.5.0","1.7.0","2.0.3","1.2.0.1","0.3.4","2.5.1","1.0.8.3","2.1.2","1.4.0","2.0.1","0.3.8","1.0.3","2.14","0.13","1.0.2","1.2.0","1.7.1","4.2.0","1.7.6","1.4.0","3.1.7","1.2.0","1.1.2","1.3.1","4.2.0","0.3.0","1.2.2","4.2.0","0.4.1","2.5.0","0.31","1.3.3","1.8-4","2.3.5"]}]}]}
+{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["packages"]}},"value":[{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["packages","version"]},"class":{"type":"character","attributes":{},"value":["data.frame"]},"row.names":{"type":"integer","attributes":{},"value":[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,73,74,75,76,77]}},"value":[{"type":"character","attributes":{},"value":["assertthat","backports","base","broom","cellranger","cli","colorspace","compiler","crayon","datasets","DBI","dbplyr","digest","dplyr","DT","ellipsis","evaluate","fansi","fastmap","forcats","fs","generics","ggplot2","glue","graphics","grDevices","grid","gtable","haven","hms","htmltools","htmlwidgets","httpuv","httr","jsonlite","knitr","later","lifecycle","lubridate","magrittr","methods","mime","modelr","munsell","pillar","pkgconfig","promises","purrr","R6","Rcpp","readr","readxl","reprex","rhandsontable","rlang","rmarkdown","rstudioapi","rvest","scales","shiny","stats","stringi","stringr","tibble","tidyr","tidyselect","tidyverse","tools","tzdb","utf8","utils","vctrs","withr","xfun","xml2","xtable","yaml"]},{"type":"character","attributes":{},"value":["0.2.1","1.4.1","4.2.0","1.0.0","1.1.0","3.3.0","2.0-3","4.2.0","1.5.1","4.2.0","1.1.3","2.2.1","0.6.29","1.0.9","0.25","0.3.2","0.15","1.0.3","1.1.0","0.5.1","1.5.2","0.1.3","3.3.6","1.6.2","4.2.0","4.2.0","4.2.0","0.3.0","2.5.0","1.1.1","0.5.2","1.5.4","1.6.5","1.4.3","1.8.0","1.39","1.3.0","1.0.1","1.8.0","2.0.3","4.2.0","0.12","0.1.8","0.5.0","1.7.0","2.0.3","1.2.0.1","0.3.4","2.5.1","1.0.8.3","2.1.2","1.4.0","2.0.1","0.3.8","1.0.3","2.14","0.13","1.0.2","1.2.0","1.7.1","4.2.0","1.7.6","1.4.0","3.1.7","1.2.0","1.1.2","1.3.1","4.2.0","0.3.0","1.2.2","4.2.0","0.4.1","2.5.0","0.31","1.3.3","1.8-4","2.3.5"]}]}]}
 </script>
 <!--/html_preserve-->
 </section>

@@ -30,15 +30,15 @@ server: shiny
 
 ## ✍ 써보기
 
-오른쪽 표에 데이터를 채우면 데이터의 시간-농도 그래프와 그것을 비구획모형분석법을 이용해 분석한 결과가 출력돼요! 
+오른쪽 표에 데이터를 채우면 데이터의 시간-농도 그래프와 그것을 비구획모형분석법을 이용해 분석한 결과가 출력돼요! 미리 표를 채워 놨어요.
 
-아래 각 모형을 이용해 추정된 반감기계산결과를 확인하세요. 그래프의 산점도 위에 겹쳐진 각 모형의 곡선의 모양과 각 모형의 반감기계산결과를 서로 비교해 보세요.
+📉[반감기계산기](https://molimapps.shinyapps.io/half-life/)를 이용하면 비선형모형과 선형모형의 적합곡선까지 확인할 수 있어요.  
 
 ```{r, message = FALSE}
 #| column: margin
 #packages ui-side
 #UI
-p("️여기 아래 ⬇ 반감기를 계산할 데이터를 입력해 주세요. \"t\"(time)에는 농도측정시간을, \"conc\"(concentration)에는 농도측정값을 넣어주세요. \n맨 처음값(\"t\" = 0, \"conc\" = 0)은 꼭 있어야 해요. 그리고 가장 높은 농도측정값이 측정된 이후의 농도측정시간들에도 최소 5개의 농도측정값이 입력되어야 합니다🙂 입력과 동시에 왼쪽의 그래프가 업데이트 돼요!")
+p("️여기 아래   ⬇NCA 분석에 이용할 데이터를 입력해 주세요. \"t\"(time)에는 농도측정시간을, \"conc\"(concentration)에는 농도측정값을 넣어주세요. \n맨 처음값(\"t\" = 0, \"conc\" = 0)은 꼭 있어야 해요. 그리고 가장 높은 농도측정값이 측정된 이후의 농도측정시간들에도 최소 5개의 농도측정값이 입력되어야 합니다🙂 입력과 동시에 그래프와 결과표가 업데이트 돼요!")
 ```
 
 ```{r, message = FALSE}
@@ -48,6 +48,7 @@ library(shiny)
 library(rhandsontable)
 library(dplyr)
 library(tidyverse)
+library(DT)
 #UI
 rHandsontableOutput("df")
 ```
@@ -58,31 +59,21 @@ library(shiny)
 library(rhandsontable)
 library(dplyr)
 library(tidyverse)
+library(DT)
 #UI
 plotOutput("plt")
 ```
 
 ## 💻결과
 
-::: callout-tip
-## 비선형모형을 이용해 추정한 반감기계산결과
-
-```{r, message = FALSE}
-#UI
-# tableOutput("tbl")
-p("초반부반감기 =",  textOutput(outputId = "tbl_biexp_initial", inline=T), "| 후반부반감기 =", textOutput(outputId = "tbl_biexp_terminal", inline=T))
-```
+::: callout-warning
+## 주의
+이 계산기를 이용해 계산한 데이터를 이용하는 것의 책임은 사용자에게 있습니다 🤔 
 :::
 
-::: callout-tip
-## 선형모형을 이용해 추정한 반감기계산결과
-
 ```{r, message = FALSE}
-#UI
-# tableOutput("tbl")
-p("초반부반감기 =",  textOutput(outputId = "tbl_lin_initial", inline=T), "| 후반부반감기 =", textOutput(outputId = "tbl_lin_terminal", inline=T))
+rHandsontableOutput('nca')
 ```
-:::
 
 ```{r}
 #| context: server
@@ -92,9 +83,13 @@ library(rhandsontable)
 library(dplyr)
 library(tidyverse)
 library(PK)
+library(PKNCA)
+library(DT)
 
 source("R/get.PK_hl.R")
 source("R/get.PK_hls.R")
+source("R/get.PK_nca.R")
+# source("R/get.PK_ncas.R")
 
 df <- readRDS("data/df.RDS") %>% 
   dplyr::select("t", "conc")
@@ -133,9 +128,11 @@ observe({
   plt <- ggplot() + 
     geom_point(data =values$data, 
                mapping = aes(x = t, y = conc), size = 3) + 
-    geom_line(data = res$curves, 
-              mapping = aes(x = t, y = conc, col = method), 
-              lwd = 1, alpha = 0.7) +
+    geom_line(data =values$data, 
+               mapping = aes(x = t, y = conc), size = 1) + 
+    # geom_line(data = res$curves, 
+    #           mapping = aes(x = t, y = conc, col = method), 
+    #           lwd = 1, alpha = 0.7) +
     # geom_point(data = chpts, aes(x = x, y = y), 
     #            col = "red", pch = 13, size = 3) +
     labs(x = "Time (\"t\")", y = "Concentration (\"conc\")") +
@@ -175,6 +172,46 @@ observe({
     renderText({parms_lin[1,1] %>% format(digits = 1, nsmall = 2)})
   output$tbl_lin_terminal <- 
     renderText({parms_lin[1,2] %>% format(digits = 1, nsmall = 2)})
+  
+  ## NCA
+  nca <- get.PK_nca(values$data) %>% 
+    select(-c("hl", "auc_inf")) %>% 
+    select(c("cmax", "clast", "tmax", "tlast", 
+             "exp.hl.initial", "exp.hl.terminal", "exp.kel", 
+             "lin.hl.initial", "lin.hl.terminal", "lin.kel", 
+             "auc", "auc_inf.exp", "auc_inf.lin")) %>%
+    t
+  
+  colnames(nca) <- c("값")
+  
+  parameter.names <- 
+    data.frame(
+      "파라메터" = c(
+      "최고농도(Cmax)", 
+      "마지막측정농도(Clast)", 
+      "최고농도도달시간(Tmax)", 
+      "마지막농도측정시간(Tlast)", 
+      "비선형모형을 이용해 추정한 반감기(초반부)", 
+      "비선형모형을 이용해 추정한 반감기(후반부)", 
+      "비선형모형 제거율 상수(Kel)",
+      "선형모형을 이용해 추정한 반감기(초반부)", 
+      "선형모형을 이용해 추정한 반감기(후반부)", 
+      "선형모형 제거율 상수(Kel)",
+      "곡선하면적(AUC)", 
+      "곡선하면적무한대외삽(AUCinf; 비선형모형)",
+      "곡선하면적무한대외삽(AUCinf; 선형모형)")
+      )
+  # rownames(nca) <- c(parameters) 
+  
+  nca <- cbind(parameter.names, nca)
+  output$nca <- renderRHandsontable(
+    {
+      rhandsontable(
+        data = nca, 
+        rowHeaders = NULL, stretchH = "all"
+        )
+    }
+  )
 })
 ```
 
